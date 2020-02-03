@@ -1,0 +1,1014 @@
+<%@page import="java.util.GregorianCalendar"%>
+<%@page import="java.text.SimpleDateFormat"%>
+<%@page import="com.atelier.services.HistCarb"%>
+<%@page import="java.util.ArrayList"%>
+<%@page import="com.atelier.services.StationServiceProxy"%>
+<%@page import="com.atelier.services.Carburant"%>
+<%@page import="com.atelier.services.Station"%>
+<%@page import="java.util.List"%>
+<%@ page language="java" contentType="text/html; charset=utf-8"
+    pageEncoding="utf-8"%>
+
+<!-- **********************************************Start Code Java *********************************************  -->
+<% 
+boolean hidden=false; 
+if(request.getAttribute("modelcnx")!=null){
+	hidden=(Boolean)request.getAttribute("modelcnx");
+}
+
+
+
+
+
+
+boolean editstation;
+Station stEdit;
+if(request.getAttribute("editstation")!=null){
+		hidden=(Boolean)request.getAttribute("modelcnx");
+	    editstation=(Boolean)request.getAttribute("editstation");
+	    stEdit=(Station)request.getAttribute("Stationedit");
+}else{
+	   editstation=false;
+	   stEdit=null;
+}
+
+SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+
+Boolean editCarburant;
+Carburant carbEdit;
+if(request.getAttribute("editCarburant")!=null){
+		hidden=(Boolean)request.getAttribute("modelcnx");
+	    editCarburant=(Boolean)request.getAttribute("editCarburant");
+	    carbEdit=(Carburant)request.getAttribute("Carburantedit");
+}else{
+	 editCarburant=false;
+	 carbEdit=null;
+	 
+}
+
+
+/****************************************************Data*************************************************/
+ //List of Stations
+ List<Station> st=new ArrayList<Station>();
+ //List of Carburants
+ List<Carburant> carb=new ArrayList<Carburant>();
+ 
+ //List of Carburants
+ List<HistCarb> histcarb=new ArrayList<HistCarb>();
+if(hidden){
+ StationServiceProxy stub=new StationServiceProxy();
+ /*************************************Data of Carburant *********************************/
+ 
+ /*************************************Data of Station *********************************/
+ try {
+		Station[] listStation=stub.readAllStations();	
+		for(int i=0; i<listStation.length ; i++) {
+			st.add(listStation[i]);
+		}
+		Carburant[] listCarburant=stub.readAllCarburants();	
+		for(int i=0; i<listCarburant.length ; i++) {
+			carb.add(listCarburant[i]);
+		}
+		HistCarb[] listhistcarb=stub.readAllHutCarbs();	
+		for(int i=0; i<listhistcarb.length ; i++) {
+			histcarb.add(listhistcarb[i]);
+		}
+	    
+	    
+	} catch (Exception e) {
+		// TODO: handle exception
+	}
+}
+%>
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>Service Web Station</title>
+
+  <!-- Custom fonts for this theme -->
+  <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet"
+    type="text/css">
+
+  <!-- Theme CSS -->
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/freelancer.min.css" rel="stylesheet">
+
+</head>
+
+<body id="page-top">
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg bg-secondary text-uppercase fixed-top" id="mainNav">
+    <div class="container">
+      <a class="navbar-brand js-scroll-trigger" href="#page-top">Service Web Station</a>
+      <button class="navbar-toggler navbar-toggler-right text-uppercase font-weight-bold bg-primary text-white rounded"
+        type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive"
+        aria-expanded="false" aria-label="Toggle navigation">
+        Menu
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item mx-0 mx-lg-1">
+            <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger active" href="#Home">Home</a>
+          </li>
+          <li class="nav-item mx-0 mx-lg-1">
+            <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#about">About</a>
+          </li>
+          <li class="nav-item mx-0 mx-lg-1">
+            <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#portfolio">Service</a>
+          </li>
+          <% if(hidden){ %>
+          <li class="nav-item mx-0 mx-lg-1">
+            <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#operation">Operations</a>
+          </li>
+          <%} %>
+          <li class="nav-item mx-0 mx-lg-1">
+            <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#contact">Contact</a>
+          </li>
+          <% if(!hidden){ %>
+          <li class="nav-item mx-0 mx-lg-1">
+			
+            <div class="portfolio-item mx-auto" data-toggle="modal" data-target="#login">
+              <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger">Sign up</a>
+            </div>
+          </li>
+          <%}else if(hidden){ %>
+           <li class="nav-item mx-0 mx-lg-1">
+			
+              <form action="Controleur" method="post">
+              <input type="hidden" name="operation" value="signout">
+              <button type="submit" class="btn btn-secondary">Sign out </button>
+              </form>
+          </li>
+          <%} %>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Masthead -->
+  <header class="masthead  text-white text-center" id="Home" style="background-color: #37dbd3;">
+    <div class="container d-flex align-items-center flex-column">
+
+      <!-- Masthead Avatar Image -->
+      <img class="masthead-avatar mb-5" src="img/avataaars.svg" alt="">
+
+      <!-- Masthead Heading -->
+      <h1 class="masthead-heading text-uppercase mb-0">Station & Carburant </h1>
+
+      <!-- Icon Divider -->
+      <div class="divider-custom divider-light">
+        <div class="divider-custom-line"></div>
+        <div class="divider-custom-icon">
+          <i class="fas fa-star"></i>
+        </div>
+        <div class="divider-custom-line"></div>
+      </div>
+
+      <!-- Masthead Subheading -->
+      <p class="masthead-subheading font-weight-light mb-0">Gestions des Services de Station </p>
+
+    </div>
+  </header>
+
+  <!-- About Section -->
+  <section class="page-section bg-secondary text-white mb-2 mt-2" id="about">
+    <div class="container">
+
+      <!-- About Section Heading -->
+      <h2 class="page-section-heading text-center text-uppercase text-white">About</h2>
+
+      <!-- Icon Divider -->
+      <div class="divider-custom divider-light">
+        <div class="divider-custom-line"></div>
+        <div class="divider-custom-icon">
+          <i class="fas fa-star"></i>
+        </div>
+        <div class="divider-custom-line"></div>
+      </div>
+
+      <!-- About Section Content -->
+      <div class="row">
+        <div class="col-lg-4 ml-auto">
+          <p class="lead">L’objectif principal de cet atelier et de pratiquer la mise en place d’une variété des web
+            services basés sur plusieurs architectures.</p>
+        </div>
+        <div class="col-lg-4 mr-auto">
+          <p class="lead">implémenter 3
+            architectures spécifiques: JAX-WS, JAX-RS, Jersey, le rôle principal de ces web services est de garantir la
+            bonne gestion des stations et prix des carburants.!</p>
+        </div>
+      </div>
+
+      <!-- About Section Button -->
+      <div class="text-center mt-4">
+        <a class="btn btn-xl btn-outline-light" href="#">
+          <i class="fas fa-book-reader mr-2"></i>
+          Read More!
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Portfolio Section -->
+  <section class="page-section portfolio" id="portfolio" style="background-color:whitesmoke;">
+    <div class="container">
+
+      <!-- Portfolio Section Heading -->
+      <h2 class="page-section-heading text-center text-uppercase text-secondary mb-0">Services</h2>
+
+      <!-- Icon Divider -->
+      <div class="divider-custom">
+        <div class="divider-custom-line"></div>
+        <div class="divider-custom-icon">
+          <i class="fas fa-star"></i>
+        </div>
+        <div class="divider-custom-line"></div>
+      </div>
+
+      <!-- Portfolio Grid Items -->
+      <div class="row">
+
+        <!-- Portfolio Item 1 -->
+        <div class="col-md-6 col-lg-4">
+          <div class="portfolio-item mx-auto" data-toggle="modal" data-target="#portfolioModal1">
+            <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100">
+              <div class="portfolio-item-caption-content text-center text-white">
+                <i class="fas fa-plus fa-3x"></i>
+              </div>
+            </div>
+            <img class="img-fluid" src="img/portfolio/1.jpg" alt="">
+          </div>
+        </div>
+
+        <!-- Portfolio Item 2 -->
+        <div class="col-md-6 col-lg-4">
+          <div class="portfolio-item mx-auto" data-toggle="modal" data-target="#portfolioModal2">
+            <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100">
+              <div class="portfolio-item-caption-content text-center text-white">
+                <i class="fas fa-plus fa-3x"></i>
+              </div>
+            </div>
+            <img class="img-fluid" src="img/portfolio/2.png" alt="">
+          </div>
+        </div>
+
+        <!-- Portfolio Item 3 -->
+        <div class="col-md-6 col-lg-4">
+          <div class="portfolio-item mx-auto" data-toggle="modal" data-target="#portfolioModal3">
+            <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100">
+              <div class="portfolio-item-caption-content text-center text-white">
+                <i class="fas fa-plus fa-3x"></i>
+              </div>
+            </div>
+            <img class="img-fluid" src="img/portfolio/3.png" alt="">
+          </div>
+        </div>
+      </div>
+      <!-- /.row -->
+
+    </div>
+  </section>
+
+<!-- ***************************************************** Start  partie Administrateur ********************************************************************** -->
+
+
+  <!--******************************************* start section formulaire *************************************************************** -->
+  <% 
+  if(hidden){ %>
+  <!-- About Section -->
+  <section class="page-section bg-white text-dark mb-0 mt-2" id="operation">
+    <div class="container">
+      <!-- About Section Heading -->
+      <h2 class="page-section-heading text-center text-uppercase text-secondary">Operations</h2>
+      <!-- Icon Divider -->
+      <div class="divider-custom">
+        <div class="divider-custom-line"></div>
+        <div class="divider-custom-icon">
+          <i class="fas fa-cogs"></i>
+        </div>
+        <div class="divider-custom-line"></div>
+      </div>
+
+      <!--***************************************************** Start Recherche**************************************************************-->
+
+      <div class="divider-custom">
+        <div class="divider-custom-line"></div>
+        <h4 class="text-center text-uppercase">Search By Id</h4>
+        <div class="divider-custom-line"></div>
+      </div>
+      <div class="row"></div>
+      <div class="row">
+        <div class="col-lg-6">
+          <p class="lead text-center">Search Station </p>
+        </div>
+        <div class="col-lg-6 ">
+          <p class="lead text-center">Search Carburant</p>
+        </div>
+      </div>
+
+
+      <div class="row">
+        <div class="col-lg-6">
+          <form>
+            <div class="form-group">
+              <label for="stId">ID of Station</label>
+              <input type="number" class="form-control" id="stId" name="stId" placeholder="Enter number">
+              <input type="hidden" name="operation" value="searchStation">
+            </div>
+            <div class="form-row">
+              <div class="form-group m-auto">
+                <button type="submit" class="btn btn-primary ">Search</button>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="col-lg-6 ">
+          <form>
+            <div class="form-group">
+              <label for="carbId">ID of Carburant</label>
+              <input type="number" class="form-control" id="carbId" name="carbId" placeholder="Enter number">
+              <input type="hidden" name="operation" value="addCarburant">
+            </div>
+            <div class="form-row">
+              <div class="form-group m-auto">
+                <button type="submit" class="btn btn-primary ">Search</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+      <!--***************************************************** End Recherche**************************************************************-->
+
+
+      <!-- Section title -->
+      <div class="row mt-5"></div>
+      <div class="row">
+        <div class="col-lg-6">
+          <p class="lead text-center text-primary">CRUD Station </p>
+        </div>
+        <div class="col-lg-6 ">
+          <p class="lead text-center text-primary">CRUB Carburant</p>
+        </div>
+      </div>
+      <!-- *******************start Section CRUD Station and Carburant************************** -->
+      <div class="divider-custom">
+        <div class="divider-custom-line"></div>
+        <h4 class="text-center text-uppercase">Create Station and Carburant</h4>
+        <div class="divider-custom-line"></div>
+      </div>
+      <div class="row">
+        <div class="col-lg-6">
+          <p class="lead text-center">Add Station </p>
+        </div>
+        <div class="col-lg-6 ">
+          <p class="lead text-center">Add Carburant</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-6 ml-auto">
+          <!--********************************************** start create station******************************************-->
+          <form method="post" action="Controleur">
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label for="stNom">Name </label>
+                <input type="text" class="form-control" id="stNom" name="stName" placeholder="Nom de Station">
+              </div>
+              <div class="form-group col-md-6">
+                <label for="inputPassword4">City </label>
+                <select class="form-control" name="stVille">
+                  <option value="Tanger">Tanger</option>
+                  <option value="Casa">Casa</option>
+                  <option value="Rabat">Rabat</option>
+                  <option value="Laaraiche">Laaraiche</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="stAddress">Address</label>
+              <input type="text" class="form-control" id="stAddress" name="stAddress" placeholder="Tanger 90060">
+              <input type="hidden" name="operation" value="addStation">
+            </div>
+            <div class="form-row">
+              <div class="form-group m-auto">
+                <button type="submit" name="operation" value="addStation" class="btn btn-primary ">Add</button>
+              </div>
+            </div>
+          </form>
+          <!--********************************************** End create station******************************************-->
+        </div>
+        <div class="col-lg-6 mr-auto">
+          <!--********************************************** start create carburant******************************************-->
+          <form method="post" action="Controleur">
+            <div class="form-row">
+              <label for="carbNom">Name</label>
+              <input type="text" class="form-control" id="carbNom" name="carbNom" placeholder="Nom de carburant">
+            </div>
+            <div class="form-group">
+            </div>
+            <div class="form-group">
+              <label for="carbDesc">description</label>
+              <input type="text" class="form-control" id="carbDesc" name="carbDesc"
+                placeholder="Carburant sans-plamb 95">
+              <input type="hidden" name="operation" value="AddCarburant">
+            </div>
+            <div class="form-row">
+              <div class="form-group m-auto">
+                <button type="submit" name="operation" value="addCarburant" class="btn btn-primary ">Add</button>
+              </div>
+            </div>
+          </form>
+          <!--********************************************** End create carburant******************************************-->
+        </div>
+      </div>
+
+
+      <!--*********************************************************** Start Data***********************************************-->
+
+      <!--***********************************************************Data de Station ***********************************************-->
+
+      <div class="row mt-5">
+        <div class="col-lg-12">
+          <p class="lead text-center"> Data of Station </p>
+        </div>
+      </div>
+      <div class="row">
+        <table class="table table-striped table-dark">
+          <thead>
+            <tr>
+              <th scope="col">Nom of Station</th>
+              <th scope="col">Ville</th>
+              <th scope="col">Address</th>
+              <th scope="col">Edit</th>
+              <th scope="col">Delete</th>
+            </tr>
+          </thead>
+          <tbody>
+            
+               <% for(Station s:st){ %>
+               <tr>
+              <th><%=s.getStNom() %></th>
+              <td><%=s.getStVillle() %></td>
+              <td><%=s.getStAddress() %></td>
+              <td>
+                <form method="post" action="Controleur">
+                  <input type="hidden" name="stId" value="<%=s.getStid() %>">
+                  <input type="hidden" name="operation" value="editeStation">
+                  <button type="submit" class="btn btn-primary "><i class="fas fa-pen-square"></i></button>
+                </form>
+              </td>
+              <td>
+                <form method="post" action="Controleur">
+                  <input type="hidden" name="stId" value="<%=s.getStid() %>">
+                  <input type="hidden" name="operation" value="deleteStation">
+                  <button type="submit" class="btn btn-danger "><i class="fas fa-trash-alt"></i></button>
+                </form>
+              </td>
+               </tr>
+              <%} %>
+           
+          </tbody>
+        </table>
+      </div>
+
+      <!--*********************************************************** Start Edit Station ***********************************************-->
+       <%
+       if(editstation){
+       %>
+       
+      <form method="post" action="Controleur">
+        <div class="form-group">
+          <label for="stIdEdit">ID</label>
+          <input type="text" class="form-control" id="stIdEdit" name="stIdEdit" value="<%=stEdit.getStid() %>" disabled="disabled">
+          <input type="hidden"  name="stIdEdit" value="<%=stEdit.getStid() %>" >
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="stNomEdit">Name </label>
+            <input type="text" class="form-control" id="stNomEdit" name="stNomEdit" value="<%=stEdit.getStNom() %>">
+          </div>
+          <div class="form-group col-md-6">
+            <label for="inputPassword4">City </label>
+            <select class="form-control" name="stVilleEdit">
+              <option value="<%=stEdit.getStVillle() %>"><%=stEdit.getStVillle() %></option>
+              <option value="Tanger">Tanger</option>
+              <option value="Casa">Casa</option>
+              <option value="Rabat">Rabat</option>
+              <option value="Laaraiche">Laaraiche</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="stAddressEdit">Address</label>
+          <input type="text" class="form-control" id="stAddressEdit" name="stAddressEdit" value="<%=stEdit.getStAddress() %>">
+          <input type="hidden" name="operation" value="StationEdit">
+        </div>
+        <div class="form-row">
+          <div class="form-group m-auto">
+            <button type="submit" class="btn btn-primary ">Edit</button>
+          </div>
+        </div>
+      </form>
+		<%} %>
+      <!--***********************************************************End Edit Station ***********************************************-->
+
+
+      <!--***********************************************************Data de Carburant ***********************************************-->
+      <div class="row mt-5">
+        <div class="col-lg-12">
+          <p class="lead text-center"> Data of Carburant </p>
+        </div>
+      </div>
+      <div class="row">
+        <table class="table table-striped table-dark">
+          <thead>
+            <tr>
+              <th scope="col">Nom of Carburant</th>
+              <th scope="col" colspan="2">Dascription</th>
+              <th scope="col">Edit</th>
+              <th scope="col">Delele</th>
+            </tr>
+          </thead>
+          <tbody>
+          	 <% for(Carburant c: carb){ %>
+            <tr>
+              <th><%=c.getCarbNom() %></th>
+              <td colspan="2"><%=c.getCarbDescription() %></td>
+              <td>
+                <form method="post" action="Controleur">
+                  <input type="hidden" name="carbId" value="<%=c.getCarbid() %>">
+                  <input type="hidden" name="operation" value="editeCarburant">
+                  <button type="submit" class="btn btn-primary "><i class="fas fa-pen-square"></i></button>
+                </form>
+              </td>
+              <td>
+                <form method="post" action="Controleur">
+                  <input type="hidden" name="carbId" value="<%=c.getCarbid() %>">
+                  <input type="hidden" name="operation" value="deleteCarburant">
+                  <button type="submit" class="btn btn-danger "><i class="fas fa-trash-alt"></i></button>
+                </form>
+              </td>
+            </tr>
+            <%} %>
+          </tbody>
+        </table>
+      </div>
+
+      <!--*********************************************************** Start Edit Carburant ***********************************************-->
+		 <%
+       if(editCarburant){
+       %>
+      <form method="post" action="Controleur">
+        <div class="form-row">
+          <label for="carbIdEdit">ID</label>
+          <input type="text" class="form-control" id="carbIdEdit" name="carbIdEdit" value="<%=carbEdit.getCarbid()%>" disabled="disabled">
+          <input type="hidden"  name="carbIdEdit" value="<%=carbEdit.getCarbid()%>" >
+        </div>
+        <div class="form-row">
+          <label for="carbNomEdit">Name</label>
+          <input type="text" class="form-control" id="carbNomEdit" name="carbNomEdit" value="<%=carbEdit.getCarbNom()%>">
+        </div>
+        <div class="form-group">
+        </div>
+        <div class="form-group">
+          <label for="carbDescEdit">description</label>
+          <input type="text" class="form-control" id="carbDescEdit" name="carbDescEdit" value="<%=carbEdit.getCarbDescription()%>">
+          <input type="hidden" name="operation" value="CarburantEdit">
+        </div>
+        <div class="form-row">
+          <div class="form-group m-auto">
+            <button type="submit" class="btn btn-primary ">Edit</button>
+          </div>
+        </div>
+      </form>
+      <%} %>
+
+      <!--***********************************************************End Edit Carburant ***********************************************-->
+
+      <!--****************************************************** Start Data***********************************************-->
+    </div>
+    <!-- ****************************************************** En Section Create**************************************************** -->
+  </section>
+  <!--******************************************* ************end section formulaire *************************************************************** -->
+
+
+  <!-- *******************************Start Historique Carburant Section ******************************************-->
+  <section class="page-section" id="HistCarb">
+    <div class="container">
+
+      <!-- Contact Section Heading -->
+      <h2 class="page-section-heading text-center text-uppercase text-secondary mb-0">History of Carburant</h2>
+
+      <!-- Icon Divider -->
+      <div class="divider-custom">
+        <div class="divider-custom-line"></div>
+        <div class="divider-custom-icon">
+          <i class="fas fa-history"></i>
+        </div>
+        <div class="divider-custom-line"></div>
+      </div>
+
+
+      <!--*********************************************************** Start Data History of carb ***********************************************-->
+      <div class="row mt-5">
+        <div class="col-lg-12">
+          <p class="lead text-center"> Data of SHistory of Caburant </p>
+        </div>
+      </div>
+      <div class="row">
+        <table class="table table-striped table-dark">
+          <thead>
+            <tr>
+              <th scope="col">Prix</th>
+              <th scope="col">Date</th>
+              <th scope="col">ID of station</th>
+              <th scope="col">ID of Carburant</th>
+              <th scope="col">Delete</th>
+            </tr>
+          </thead>
+          <tbody>
+          <% for(HistCarb hc:histcarb){ 
+        	  
+          %>
+            <tr>
+              <th><%=hc.getPrix() %></th>
+              <td><%=format.format(hc.getDate().getTime()) %></td>
+              <td><%=hc.getStation().getStid() %></td>
+              <td>
+                <%=hc.getCarburant().getCarbid() %>
+              </td>
+              <td>
+                <form  method="post" action="Controleur">
+                  <input type="hidden" name="histId" value="<%=hc.getHistcarbid() %>">
+                  <input type="hidden" name="operation" value="deletehistCarb">
+                  <button type="submit" class="btn btn-danger "><i class="fas fa-trash-alt"></i></button>
+                </form>
+              </td>
+            </tr>
+            <%} %>
+          </tbody>
+        </table>
+      </div>
+
+      <!--*********************************************************** Start Data History of carb ***********************************************-->
+    </div>
+  </section>
+  <!-- *******************************End Historique Carburant Section ******************************************-->
+  
+  
+  <% } %>
+ 
+ <!-- ********************************************* End  partie Administrateur ********************************************************* --> 
+
+  <!-- Contact Section -->
+  <section class="page-section" id="contact">
+    <div class="container">
+
+      <!-- Contact Section Heading -->
+      <h2 class="page-section-heading text-center text-uppercase text-secondary mb-0">Contact Me</h2>
+
+      <!-- Icon Divider -->
+      <div class="divider-custom">
+        <div class="divider-custom-line"></div>
+        <div class="divider-custom-icon">
+          <i class="fas fa-envelope"></i>
+        </div>
+        <div class="divider-custom-line"></div>
+      </div>
+      <!---******************************Start Form Contact Me **********************************-->
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-12 col-md-8 col-lg-6 pb-5">
+            <!--Form with header-->
+
+            <form action="mail.php" method="post">
+              <div class="card border-primary rounded-0">
+                <div class="card-header p-0">
+                  <div class="bg-info text-white text-center py-2">
+                    <h3><i class="fa fa-envelope"></i> Send Email </h3>
+                    <p class="m-0"> We will gladly help you</p>
+                  </div>
+                </div>
+                <div class="card-body p-3">
+
+                  <!--Body-->
+                  <div class="form-group">
+                    <div class="input-group mb-2">
+                      <div class="input-group-prepend">
+                        <div class="input-group-text"><i class="fa fa-user text-info"></i></div>
+                      </div>
+                      <input type="text" class="form-control" id="nombre" name="name" placeholder="Name" required>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <div class="input-group mb-2">
+                      <div class="input-group-prepend">
+                        <div class="input-group-text"><i class="fa fa-envelope text-info"></i></div>
+                      </div>
+                      <input type="email" class="form-control" id="nombre" name="email" placeholder="exemple@gmail.com"
+                        required>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <div class="input-group mb-2">
+                      <div class="input-group-prepend">
+                        <div class="input-group-text"><i class="fa fa-comment text-info"></i></div>
+                      </div>
+                      <textarea class="form-control" placeholder="Send us your message" required></textarea>
+                    </div>
+                  </div>
+                  <input type="hidden" name="operation" value="contact" class="btn btn-info btn-block rounded-0 py-2">
+                  <div class="text-center">
+                    <input type="submit" name="operation" value="Send" class="btn btn-info btn-block rounded-0 py-2">
+                  </div>
+                </div>
+
+              </div>
+            </form>
+            <!--Form with header-->
+          </div>
+        </div>
+      </div>
+      <!---****************************** End Form Contact Me **********************************-->
+
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer text-center">
+    <div class="container">
+      <div class="row">
+
+        <!-- Footer Location -->
+        <div class="col-lg-4 mb-5 mb-lg-0">
+          <h4 class="text-uppercase mb-4">Location</h4>
+          <p class="lead mb-0">EDAIG Khalid MSIM
+            <br><a class="badge badge-primary" href="http://www.fstt.ac.ma">www.fstt.ac.ma</a></p>
+        </div>
+
+        <!-- Footer Social Icons -->
+        <div class="col-lg-4 mb-5 mb-lg-0">
+          <h4 class="text-uppercase mb-4">Around the Web</h4>
+          <a class="btn btn-outline-light btn-social mx-1" href="#">
+            <i class="fab fa-fw fa-facebook-f"></i>
+          </a>
+          <a class="btn btn-outline-light btn-social mx-1" href="#">
+            <i class="fab fa-fw fa-twitter"></i>
+          </a>
+          <a class="btn btn-outline-light btn-social mx-1" href="#">
+            <i class="fab fa-fw fa-linkedin-in"></i>
+          </a>
+          <a class="btn btn-outline-light btn-social mx-1" href="#">
+            <i class="fab fa-fw fa-github"></i>
+          </a>
+        </div>
+
+        <!-- Footer About Text -->
+        <div class="col-lg-4">
+          <h4 class="text-uppercase mb-4">About Freelancer</h4>
+          <p class="lead mb-0">Read More</p>
+          <a class="badge badge-success" href="http://startbootstrap.com">Start Bootstrap</a>
+          <a class="badge badge-danger" href="https://fr.wikipedia.org/wiki/Service_web">Start Web Service</a>
+          <a class="badge badge-warning" href="https://www.jmdoudoux.fr/java/dej/indexavecframes.htm">Start Java/J2EE</a>
+        </div>
+
+      </div>
+    </div>
+  </footer>
+
+  <!-- Copyright Section -->
+  <section class="copyright py-4 text-center text-white">
+    <div class="container">
+      <small>Copyright &copy; Your Website 2019</small>
+    </div>
+  </section>
+
+  <!-- Scroll to Top Button (Only visible on small and extra-small screen sizes) -->
+  <div class="scroll-to-top d-lg-none position-fixed ">
+    <a class="js-scroll-trigger d-block text-center text-white rounded" href="#page-top">
+      <i class="fa fa-chevron-up"></i>
+    </a>
+  </div>
+
+   <!-- Portfolio Modal 1 -->
+  <div class="portfolio-modal modal fade" id="portfolioModal1" tabindex="-1" role="dialog"
+    aria-labelledby="portfolioModal1Label" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+      <div class="modal-content">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">
+            <i class="fas fa-times"></i>
+          </span>
+        </button>
+        <div class="modal-body text-center">
+          <div class="container">
+            <div class="row justify-content-center">
+              <div class="col-lg-8">
+                <!-- Portfolio Modal - Title -->
+                <h2 class="portfolio-modal-title text-secondary text-uppercase mb-0">Stations</h2>
+                <!-- Icon Divider -->
+                <div class="divider-custom">
+                  <div class="divider-custom-line"></div>
+                  <div class="divider-custom-icon">
+                    <i class="fas fa-star"></i>
+                  </div>
+                  <div class="divider-custom-line"></div>
+                </div>
+                <!-- Portfolio Modal - Image -->
+                <img class="img-thumbnail mb-3" src="img/portfolio/1.jpg" alt="">
+                <!-- Portfolio Modal - Text -->
+                <div class="field text-left">
+                <p class="mb-5">
+                  <h1 >Petrol service station services include:</h1>
+                    <ul>
+                    <li>Fuel Quality Monitoring:</li>
+                    <p>Intertek provides field fuel sampling and laboratory testing services to support regulatory and consumer protection programs.</p>
+                      <li>Petrol Pump Calibration for Metrological Control:</li>
+                      <p> Intertek verifies the accuracy of measured fuel quantity delivered matches the fuel pump reading, helping assure consumer protection.</p>
+                    <li>Environmental Testing:</li>
+                    <p>Intertek labs provide soil and water contamination analysis, helping clients identify contamination sources for more rapid response and mitigation.
+                    Petrol station fuels samples and tested include the full range of fuels and their components and additives, including gasoils, gasoline, diesel, fuel oils, biofuels, DEF (AdBlue), CNG, and other fuels.</p>
+                    </ul>
+                  </p>
+                  </p>
+                </div>
+                <button class="btn btn-primary" href="#" data-dismiss="modal">
+                  <i class="fas fa-times fa-fw"></i>
+                  Close Window
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Portfolio Modal 2 -->
+  <div class="portfolio-modal modal fade" id="portfolioModal2" tabindex="-1" role="dialog"
+    aria-labelledby="portfolioModal2Label" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+      <div class="modal-content">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">
+            <i class="fas fa-times"></i>
+          </span>
+        </button>
+        <div class="modal-body text-center">
+          <div class="container">
+            <div class="row justify-content-center">
+              <div class="col-lg-8">
+                <!-- Portfolio Modal - Title -->
+                <h2 class="portfolio-modal-title text-secondary text-uppercase mb-0">Carburant</h2>
+                <!-- Icon Divider -->
+                <div class="divider-custom">
+                  <div class="divider-custom-line"></div>
+                  <div class="divider-custom-icon">
+                    <i class="fas fa-star"></i>
+                  </div>
+                  <div class="divider-custom-line"></div>
+                </div>
+                <!-- Portfolio Modal - Image -->
+                <img class="img-fluid rounded mb-5" src="img/portfolio/2.png" alt="">
+                <!-- Portfolio Modal - Text -->
+                <p class="mb-5"></p>
+                <button class="btn btn-primary" href="#" data-dismiss="modal">
+                  <i class="fas fa-times fa-fw"></i>
+                  Close Window
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Portfolio Modal 3 -->
+  <div class="portfolio-modal modal fade" id="portfolioModal3" tabindex="-1" role="dialog"
+    aria-labelledby="portfolioModal3Label" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+      <div class="modal-content">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">
+            <i class="fas fa-times"></i>
+          </span>
+        </button>
+        <div class="modal-body text-center">
+          <div class="container">
+            <div class="row justify-content-center">
+              <div class="col-lg-8">
+                <!-- Portfolio Modal - Title -->
+                <h2 class="portfolio-modal-title text-secondary text-uppercase mb-0">Historique Carburants</h2>
+                <!-- Icon Divider -->
+                <div class="divider-custom">
+                  <div class="divider-custom-line"></div>
+                  <div class="divider-custom-icon">
+                    <i class="fas fa-star"></i>
+                  </div>
+                  <div class="divider-custom-line"></div>
+                </div>
+                <!-- Portfolio Modal - Image -->
+                <img class="img-fluid rounded mb-5" src="img/portfolio/3.png" alt="">
+                <!-- Portfolio Modal - Text -->
+                <p class="mb-5"></p>
+                <button class="btn btn-primary" href="#" data-dismiss="modal">
+                  <i class="fas fa-times fa-fw"></i>
+                  Close Window
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--************************************************************** start Login****************************************************-->
+  <!-- Login -->
+  <div class="portfolio-modal modal fade" id="login" tabindex="-1" role="dialog" aria-labelledby="loginModal2Label"
+    aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+      <div class="modal-content">
+        <div class="modal-body text-center">
+          <div class="container">
+            <div class="row justify-content-center">
+              <div class="col-lg-8">
+                <!-- Portfolio Modal - Title -->
+                <h2 class="portfolio-modal-title text-secondary text-uppercase mb-0">Login</h2>
+                <!-- Icon Divider -->
+                <div class="divider-custom">
+                  <div class="divider-custom-line"></div>
+                  <div class="divider-custom-icon">
+                    <i class="fas fa-user"></i>
+                  </div>
+                  <div class="divider-custom-line"></div>
+                </div>
+                <!--******************************** Start Form ***************************-->
+                <form action="Controleur" class="was-validated" method="POST">
+                  <div class="form-group text-left">
+                    <label for="uname">Username:</label>
+                    <input type="text" class="form-control" id="uname" placeholder="Enter username" name="username"
+                      required>
+                    <div class="valid-feedback">Valid.</div>
+                    <div class="invalid-feedback">Please fill out this field.</div>
+                  </div>
+                  <div class="form-group text-left">
+                    <label for="pwd">Password:</label>
+                    <input type="password" class="form-control" id="pwd" placeholder="Enter password" name="pass"
+                      required>
+                    <div class="valid-feedback">Valid.</div>
+                    <div class="invalid-feedback">Please fill out this field.</div>
+                  </div>
+                  <input type="hidden" name="operation" value="login">
+                  <button type="submit" class="btn btn-secondary"><i class="fas fa-sign-in-alt" title="Sign in"
+                      style="color: rgb(233, 193, 14);"></i></button>
+                </form>
+                <!--******************************** Start Form ***************************-->
+                <button class="btn btn-primary mt-5" href="#" data-dismiss="modal">
+                  <i class="fas fa-times fa-fw"></i>
+                  Close Window
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--************************************************************** End Login****************************************************-->
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="vendor/jquery/jquery.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Plugin JavaScript -->
+  <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+  <!-- Contact Form JavaScript -->
+  <script src="js/jqBootstrapValidation.js"></script>
+  <script src="js/contact_me.js"></script>
+
+  <!-- Custom scripts for this template -->
+  <script src="js/freelancer.min.js"></script>
+
+</body>
+
+</html>

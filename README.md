@@ -15,13 +15,15 @@ les specification,outils et les frameworks utilisé
 -bootsrap
 -JS
 -tomcat
+-xampp
+-Mysql
 -eclipse
 
 ....
 Suivi les etapes
 1.telecharger l'atelier
 2.importe les projet dans eclipse
-3.creer DB
+3.creer DB : dbgstation
 4.demarrer serveur
 5.demarrer l'app client
 6.authentifier : password et login admin

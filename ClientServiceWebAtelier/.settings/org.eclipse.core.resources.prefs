@@ -1,0 +1,9 @@
+eclipse.preferences.version=1
+encoding//WebContent/index.jsp=UTF-8
+encoding//src/com/atelier/services/Carburant.java=UTF-8
+encoding//src/com/atelier/services/HistCarb.java=UTF-8
+encoding//src/com/atelier/services/ServiceStationService.java=UTF-8
+encoding//src/com/atelier/services/ServiceStationServiceLocator.java=UTF-8
+encoding//src/com/atelier/services/Station.java=UTF-8
+encoding//src/com/atelier/services/StationService.java=UTF-8
+encoding//src/com/atelier/services/StationServicePortBindingStub.java=UTF-8
